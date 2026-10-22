@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ROOT//ACCESS — ночной взлом сервера</title>
+  <meta name="description" content="Логическая игра про взлом сервера: угадай код доступа по подсказкам системы. Пять уровней, сканер, журнал попыток и ночная смена.">
+  <meta name="theme-color" content="#050807">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="ROOT//ACCESS — ночной взлом сервера">
+  <meta property="og:description" content="Пять серверов, уникальные коды и один шанс не оставить след.">
+  <meta property="og:url" content="https://socdevvv.github.io/root-access/">
+  <meta property="og:image" content="https://socdevvv.github.io/root-access/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+  <div class="crt" aria-hidden="true"></div>
+  <div class="noise" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <button class="brand" id="brand-btn" type="button" aria-label="ROOT ACCESS — в меню">ROOT<span>//</span>ACCESS</button>
+      <div class="topbar-meta">
+        <span class="signal"><i></i> CONNECTED</span>
+        <button class="sound-btn" id="sound-toggle" type="button" aria-pressed="true">ЗВУК: ВКЛ</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap screen">
+    <section class="start-screen" id="start-screen" aria-labelledby="start-title">
+      <div class="start-copy">
+        <p class="kicker"><span></span> Ночная смена · терминал 07</p>
+        <h1 class="start-title" id="start-title"><span>ROOT<span class="slash">//</span></span><span class="title-access">ACCESS</span></h1>
+        <p class="start-lead">Сервер заперт. Код доступа состоит из уникальных символов. После каждой попытки система показывает, сколько символов угадано — и на своих ли они местах.</p>
+        <div class="start-actions">
+          <button class="btn btn--primary" id="start-btn" type="button">НАЧАТЬ ВЗЛОМ <span aria-hidden="true">→</span></button>
+          <button class="btn btn--ghost" id="how-btn" type="button">КАК ИГРАТЬ</button>
+        </div>
+        <div class="start-grid">
+          <div><span>ЛУЧШИЙ СЧЁТ</span><strong id="best-start">000000</strong></div>
+          <div><span>СЕРВЕРОВ</span><strong>05</strong></div>
+          <div><span>РЕЖИМ</span><strong>ЛОГИКА</strong></div>
+        </div>
+        <p class="start-hint">Нажми <kbd>Enter</kbd>, чтобы начать</p>
+      </div>
+
+      <aside class="preview" aria-label="Пример терминала">
+        <div class="preview-bar"><span>TRACE//07</span><span class="preview-live">LIVE</span></div>
+        <div class="preview-body">
+          <p class="preview-line"><span>&gt;</span> ssh root@10.0.0.7</p>
+          <p class="preview-line preview-danger"><span>&gt;</span> ACCESS DENIED</p>
+          <p class="preview-line"><span>&gt;</span> attempt 01/08</p>
+          <div class="preview-code"><span>?</span><span>?</span><span>?</span><span>?</span></div>
+          <div class="preview-pegs"><i class="peg exact"></i><i class="peg partial"></i><i class="peg miss"></i><i class="peg miss"></i></div>
+          <p class="preview-note">код содержит 4 уникальных символа</p>
+        </div>
+        <span class="preview-stamp">DENIED</span>
+      </aside>
+    </section>
+
+    <section class="game-screen hidden" id="game-screen" aria-label="Игра">
+      <div class="game-head">
+        <div class="level-block">
+          <span class="label">УРОВЕНЬ <b id="level-num">01</b> / 05</span>
+          <h2 id="level-name">ПЕРИМЕТР</h2>
+        </div>
+        <div class="score-block">
+          <span class="label">СЧЁТ</span>
+          <strong id="score">000000</strong>
+        </div>
+        <div class="trace-block">
+          <div class="trace-head"><span class="label">СЛЕД</span><span id="attempts-label">8 ПОПЫТОК</span></div>
+          <div class="trace-meter" id="trace-meter" aria-label="Осталось попыток"></div>
+        </div>
+      </div>
+
+      <div class="game-body">
+        <div class="terminal-panel" id="terminal-panel">
+          <div class="panel-bar"><span>ACCESS TERMINAL</span><span id="status-line">ОЖИДАНИЕ КОДА</span></div>
+          <div class="code-zone">
+            <div class="code-slots" id="code-slots" aria-label="Введённый код"></div>
+            <p class="hint-slot hidden" id="hint-slot"></p>
+            <div class="legend">
+              <span><i class="peg exact"></i> на месте</span>
+              <span><i class="peg partial"></i> не на месте</span>
+              <span><i class="peg miss"></i> мимо</span>
+            </div>
+          </div>
+          <p class="message" id="message" role="status" aria-live="polite">Введи код из 4 уникальных символов.</p>
+          <div class="keypad-zone">
+            <div class="keypad" id="keypad"></div>
+            <div class="keypad-actions">
+              <button class="btn btn--scan" id="scan-btn" type="button">СКАН <span>+1 СИМВОЛ</span></button>
+              <button class="btn btn--small" id="back-btn" type="button" aria-label="Стереть последний символ">DEL</button>
+              <button class="btn btn--primary" id="enter-btn" type="button">ВВОД ↵</button>
+            </div>
+          </div>
+        </div>
+
+        <aside class="log-panel" aria-label="Журнал попыток">
+          <div class="panel-bar"><span>ЖУРНАЛ ПОПЫТОК</span><span id="log-count">00</span></div>
+          <div class="log" id="log"></div>
+          <div class="log-legend">
+            <span><i class="peg exact"></i> на месте</span>
+            <span><i class="peg partial"></i> не на месте</span>
+            <span><i class="peg miss"></i> мимо</span>
+          </div>
+        </aside>
+      </div>
+
+      <button class="btn btn--restart" id="restart-btn" type="button">СБРОСИТЬ СЕССИЮ</button>
+    </section>
+  </main>
+
+  <div class="modal hidden" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-text">
+    <div class="modal-card">
+      <p class="modal-kicker" id="modal-kicker"></p>
+      <h2 id="modal-title"></h2>
+      <p class="modal-text" id="modal-text"></p>
+      <div class="modal-code" id="modal-code"></div>
+      <div class="modal-actions">
+        <button class="btn btn--primary" id="modal-primary" type="button">ДАЛЬШЕ</button>
+        <button class="btn btn--ghost" id="modal-secondary" type="button">В МЕНЮ</button>
+      </div>
+      <button class="copy-btn hidden" id="copy-btn" type="button">СКОПИРОВАТЬ РЕЗУЛЬТАТ</button>
+    </div>
+  </div>
+
+  <div class="modal hidden" id="how-modal" role="dialog" aria-modal="true" aria-labelledby="how-title">
+    <div class="modal-card how-card">
+      <p class="modal-kicker">ПРОТОКОЛ ДОСТУПА</p>
+      <h2 id="how-title">КАК ИГРАТЬ</h2>
+      <ol class="how-steps">
+        <li><b>01</b><span>Введи код из уникальных символов. Длина и алфавит зависят от уровня.</span></li>
+        <li><b>02</b><span>После проверки зелёная точка означает «символ на своём месте», жёлтая — «символ есть, но в другом месте».</span></li>
+        <li><b>03</b><span>Кончились попытки — доступ заблокирован. Один «СКАН» на уровень открывает позицию, но уменьшает бонус.</span></li>
+      </ol>
+      <p class="how-note">Можно вводить с клавиатуры: <kbd>Enter</kbd> — проверка, <kbd>Backspace</kbd> — стереть, <kbd>S</kbd> — скан.</p>
+      <button class="btn btn--primary" id="how-close" type="button">ПОНЯТНО</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="script.js"></script>
+</body>
+</html>
