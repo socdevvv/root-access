@@ -239,7 +239,7 @@
   function restartLevel() {
     if (!state) return;
     startLevel(state.levelIndex);
-    showToast("СЕССИЯ ПЕРЕЗАПУЩЕНА");
+    showToast("УРОВЕНЬ ПЕРЕЗАПУЩЕН");
   }
 
   function showStart() {
@@ -799,7 +799,11 @@
     if (!audioCtx) {
       const AudioContextClass = window.AudioContext || window.webkitAudioContext;
       if (!AudioContextClass) return null;
-      audioCtx = new AudioContextClass();
+      try {
+        audioCtx = new AudioContextClass();
+      } catch {
+        return null;
+      }
     }
     if (audioCtx.state === "suspended") {
       audioCtx.resume().catch(() => {});
